@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Matches Won per team per year </title>
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src = "https://code.highcharts.com/highcharts.js"></script>  
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+</head>
+<body>
+    <div id = "container" style = "width: 550px; height: 400px; margin: 0 auto"></div>
+     <script>
+        const data = JSON.parse("{{data|escapejs}}")
+        
+        const chart = {
+            type: 'column'
+        };
+
+        const title = {
+            text: 'Matches Won Per team Per season'
+        };
+
+        const xAxis = {
+            title: {
+                text: 'Season'
+            },
+            categories: data.categories
+        };
+
+        const yAxis = {
+            title: {
+                text: 'Number of matches played'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        };
+
+
+        const values = Object.keys(data.matches_won).map(team => {
+            const teamData = {
+                name: team,
+                data: xAxis.categories.map(year => {
+                    if(year in data.matches_won[team]) {
+                        return data.matches_won[team][year];
+                    } else {
+                        return 0;
+                    }
+                })
+            }
+            return teamData; 
+        });
+        console.log(values)
+        const series = values;
+
+        const json = {};
+        json.chart = chart;
+        json.title = title;
+        json.xAxis = xAxis;
+        json.yAxis = yAxis;
+        json.series = series;
+        
+        $('#container').highcharts(json);
+     </script>
+</body>
+</html>
